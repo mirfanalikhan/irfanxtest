@@ -8,13 +8,17 @@ class CustomTextWidget extends StatelessWidget {
   final double textFontSize;
   final Color textColor;
   final FontWeight textFontWeight;
+  final TextOverflow textOverflow;
+  final int? maxLines;
   
   const CustomTextWidget({
     super.key,
     required this.text,
     this.textFontSize = 12,
     this.textColor = ApplicationColorConstants.blackColor,
-    this.textFontWeight =  FontWeight.normal
+    this.textFontWeight =  FontWeight.normal,
+    this.textOverflow = TextOverflow.visible,
+    this.maxLines = null
   });
 
   @override
@@ -26,6 +30,8 @@ class CustomTextWidget extends StatelessWidget {
         color: textColor,
         fontWeight: textFontWeight,
       ),
+      maxLines: maxLines,
+      overflow: textOverflow,
     );
   }
 }

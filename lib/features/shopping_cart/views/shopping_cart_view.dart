@@ -13,6 +13,8 @@ class ShoppingCartView extends StatefulWidget {
 }
 
 class _ShoppingCartViewState extends State<ShoppingCartView> {
+
+  String total = "1 item(s) - SAR 36.80";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,11 +25,89 @@ class _ShoppingCartViewState extends State<ShoppingCartView> {
           textFontSize: 20,
         ),
         centerTitle: true,
-        actions: [
-          const Icon(
+        actions: const [
+          Icon(
             CupertinoIcons.arrow_down_circle
           )
         ],
+      ),
+      bottomNavigationBar: SizedBox(
+        height: 150,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomTextWidget(
+                text: total,
+                textColor: ApplicationColorConstants.blackColor,
+                textFontSize: 20,
+              ),
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ApplicationColorConstants.blackColor,
+                    ),
+                    onPressed: () {
+
+                    },
+                    child: CustomTextWidget(
+                      text: "Checkout",
+                      textColor: ApplicationColorConstants.whiteColor,
+                    )
+                  ),
+                ),
+              ),
+              BottomNavigationBar(
+                currentIndex: 3,
+                unselectedItemColor: ApplicationColorConstants.greyColor,
+                selectedItemColor: ApplicationColorConstants.blackColor,
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.home_outlined,
+                    ),
+                    label: "Home"
+                  ),
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.category,
+                      ),
+                      label: "Categories"
+                  ),
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.branding_watermark,
+                      ),
+                      label: "Brands"
+                  ),
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.shopping_bag,
+                      ),
+                      label: "Bag",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.account_box,
+                    ),
+                    label: "My Account",
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       body: FutureBuilder(
         future: ShoppingCartUtility().getShoppingCartData(),
@@ -60,6 +140,7 @@ class _ShoppingCartViewState extends State<ShoppingCartView> {
                 );
               }
               print(snapshot.data);
+              total = snapshot.data['cart']['total'];
               return ListView(
                 children: [
                   for (Map<String, dynamic> product in snapshot.data['cart']['products'])...[
@@ -194,36 +275,60 @@ class _ShoppingCartViewState extends State<ShoppingCartView> {
                       textFontSize: 15,
                     ),
                   ),
-                  GridView(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3
-                    ),
-                    children: [
-                      for (Map<String, dynamic> product in snapshot.data['recommended_products'] ['products'])...[
-                        Card(
-                          elevation: 3,
-                          child: Container(
-                            width: 100,
-                            height: 2100,
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        product['thumb']
-                                      )
-                                    )
-                                  ),
-                                )
-                              ],
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.8,
+                    child: GridView(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 4
+                      ),
+                      children: [
+                        for (Map<String, dynamic> product in snapshot.data['recommended_products'] ['products'])...[
+                          Card(
+                            elevation: 3,
+                            child: Container(
+                              width: 100,
+                              height: 300,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                      height: 55,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            product['thumb']
+                                          )
+                                        )
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width / 2.5,
+                                      child: CustomTextWidget(
+                                        text: "${product['name']} - ${product['quantity']} Piece",
+                                        textColor: ApplicationColorConstants.blackColor,
+                                        textFontSize: 12,
+                                        textOverflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                    CustomTextWidget(
+                                      text: product['price_formated'],
+                                      textColor: ApplicationColorConstants.redColor,
+                                      textFontSize: 10,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        )
-                      ]
-                    ],
+                          )
+                        ]
+                      ],
+                    ),
                   )
                 ],
               );
